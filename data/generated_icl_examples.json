@@ -1,0 +1,1502 @@
+[
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Improper access control to the debug interface, allowing unauthorized access.",
+    "code": "module secure_module(input wire clk, input wire enable_debug);\n  reg [31:0] secret_data;\n\n  always @(posedge clk) begin\n    if (enable_debug) begin\n      // Debug code block\n      $display(\"Debug Access: Secret Data=%h\", secret_data);\n    end\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Improper isolation of critical resources from unauthorized modification.",
+    "code": "module secure_data(input wire clk, input wire reset, input wire modify, output reg [31:0] critical_data);\n\n  always @(posedge clk or posedge reset) begin\n    if (reset) begin\n      critical_data <= 32'h0;\n    end else if (modify) begin\n      critical_data <= critical_data + 1;\n    end\n  end\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Data path is not properly cleared, posing memory leakage risks.",
+    "code": "module data_leakage(input wire clk, input wire clear);\n  reg [31:0] data_storage;\n\n  always @(posedge clk) begin\n    if (clear) begin\n      // Incorrect clearing, possible data remnants\n      data_storage <= data_storage & 8'hFF;\n    end\n  end\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Improper handling of sensitive data overwrites on reallocation.",
+    "code": "module sensitive_data(input wire clk, input wire reset);\n  reg [31:0] secret_data;\n\n  always @(posedge clk) begin\n    if (reset) begin\n      // Reallocation without clearing\n      secret_data <= 32'hdeadbeef;\n    end\n  end\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Improper initialization leading to potential leakage of previous values.",
+    "code": "module improper_initialization(input wire clk);\n  reg [31:0] uninit_reg;\n\n  always @(posedge clk) begin\n    // Use uninitialized register\n    $display(\"Value: %h\", uninit_reg);\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Unsafe combinational logic could lead to timing issues and incorrect outputs.",
+    "code": "module unsafe_logic(input wire a, b, output wire c);\n  assign c = a & a | b;\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Information exposure through a side channel using improperly conditioned outputs.",
+    "code": "module side_channel(input wire power, clock, output wire data_ready);\n\n  always @(posedge clock) begin\n    if (power > 1) begin\n      // Side channel: data ready too early\n      data_ready <= 1'b1;\n    end\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive data retained in unused resources after reset.",
+    "code": "module sensitive_clear(input wire clk, input wire reset);\n  reg [31:0] sensitive_data;\n\n  always @(posedge clk or posedge reset) begin\n    if (reset) begin\n      // Data not fully cleared\n      sensitive_data <= sensitive_data & 8'hF0;\n    end\n  end\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper privilege management within hardware resources.",
+    "code": "module privilege_check(input wire access_level);\n  always @(*) begin\n    if (access_level > 2) begin\n      // Improper access control\n      $display(\"Access granted to all resources.\");\n    end\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Using weak cryptographic components for sensitive operations.",
+    "code": "module weak_crypto(input wire clk, input wire start, output reg [7:0] digest);\n  reg [7:0] seed;\n\n  always @(posedge clk) begin\n    if (start) begin\n      // Weak PRNG for cryptographic use\n      seed <= seed * 3 + 1;\n      digest <= seed;\n    end\n  end\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Improper Masking of Sensitive Data",
+    "code": "module imp_masking(\n    input wire [31:0] data_in,\n    output wire [31:0] masked_data\n);\n\nassign masked_data = data_in & 32'hFF;\n\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Use Before Initialization",
+    "code": "module uninit_use(\n    input wire clk,\n    output reg [7:0] counter\n);\n\nalways @(posedge clk) begin\n    counter <= counter + 1;\nend\n\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Improper Checking for Unusual or Exceptional Conditions",
+    "code": "module improper_check(\n    input wire [7:0] value,\n    output wire flag\n);\n\nassign flag = (value == 8'hFF) ? 1'b0 : 1'b1;\n\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Incorrect Conversion between Numeric Types",
+    "code": "module incorrect_conversion(\n    input wire [3:0] small_num,\n    output wire [7:0] big_num\n);\n\nassign big_num = small_num * 16;\n\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Handling of Missing Values",
+    "code": "module missing_values(\n    input wire [15:0] data,\n    output wire [15:0] processed_data\n);\n\nassign processed_data = data | 16'h0000;\n\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy",
+    "code": "module observable_discrepancy(\n    input wire [3:0] secret,\n    output wire access_granted\n);\n\nassign access_granted = (secret == 4'b1010);\n\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Resource Not Removed Before Reuse",
+    "code": "module sensitive_info(\n    input wire use,\n    reg [31:0] internal_memory\n);\n\nalways @(use) begin\n    if (!use) internal_memory = 32'h0;\nend\n\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Incorrect Default Permissions",
+    "code": "module default_perm(\n    input wire clk,\n    output reg [7:0] control\n);\n\nalways @(posedge clk) begin\n   control <= 8'hFF;\nend\n\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information",
+    "code": "module cleartext_tx(\n    input wire [127:0] secret,\n    output wire [127:0] transmission\n);\n\nassign transmission = secret;\n\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Required Cryptographic Step",
+    "code": "module missing_crypto_step(\n    input wire [127:0] data,\n    output wire [127:0] encrypted_data\n);\n\nassign encrypted_data = data; //Missing encryption\n\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "On-Chip Debug Port Accessible Without Proper Authentication.",
+    "code": "module debug_interface(input wire enable, output wire debug_data);\n  always @(posedge enable) begin\n    debug_data <= 32'hDEADBEEF; // Debug data exposed\n  end\nendmodule",
+    "bug_location": "Line 3: 'enable' signal used without authentication."
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Failure to Revoke Permissions for a Security Critical Operation.",
+    "code": "module secure_control(input wire access_grant, output wire control_signal);\n  reg secure_state = 1'b0;\n  always @(posedge access_grant) begin\n    if (access_grant) begin\n      secure_state <= 1'b1;\n    end else begin\n      control_signal <= secure_state; // Improper permission\n    end\n  end\nendmodule",
+    "bug_location": "Line 7: 'control_signal' used insecurely."
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Improper Handling of Inherent Race Conditions in HDL Code.",
+    "code": "module race_condition(input wire clk, input wire start, output reg finish);\n  reg [7:0] counter = 8'd0;\n  always @(posedge clk) begin\n    if (start) begin\n      counter <= counter + 1;\n      if (counter == 8'd255) begin\n        finish <= 1'b1; // Race condition\n      end\n    end\n  end\nendmodule",
+    "bug_location": "Line 7: Inherent Race Condition with 'counter'."
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Improper Output Neutralization for a Control Signal Data.",
+    "code": "module signal_neutralization(input wire [3:0] data, output wire [3:0] neutralized_data);\n  assign neutralized_data = data; // No neutralization\nendmodule",
+    "bug_location": "Line 2: 'data' used without checking."
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Resource Not Removed Before Reuse.",
+    "code": "module sensitive_storage(input wire clk, output reg [7:0] secret);\n  always @(posedge clk) begin\n    secret <= 8'hFF; // Sensitive data used\n  end\nendmodule",
+    "bug_location": "Line 3: 'secret' not cleared before reuse."
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper Verification of Source of a Critical Decision.",
+    "code": "module source_verification(input wire trusted, input wire decision, output wire enforce);\n  assign enforce = decision && trusted; // Unverified decision\nendmodule",
+    "bug_location": "Line 2: Missing proper verification of 'decision'."
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information.",
+    "code": "module cleartext_transmission(input wire [7:0] secret_data, output wire [7:0] transmit);\n  always @(*) begin\n    transmit <= secret_data; // Cleartext transmission\n  end\nendmodule",
+    "bug_location": "Line 3: 'secret_data' transmitted without encryption."
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Insufficient Entropy in PRNG Used for Secure Applications.",
+    "code": "module weak_prng(output reg [7:0] random_number);\n  initial begin\n    random_number = 8'd42; // Insufficient entropy\n  end\nendmodule",
+    "bug_location": "Line 3: 'random_number' lacks randomness."
+  },
+  {
+    "cwe_id": "CWE-440",
+    "description": "Expected Behavior Violation Due to Inconsistent State Transitions.",
+    "code": "module state_machine(input wire clk, reset, output reg [1:0] state);\n  always @(posedge clk or posedge reset) begin\n    if (reset) begin\n      state <= 2'b00; // Inconsistent state\n    end else begin\n      state <= state + 1; // Overflow\n    end\n  end\nendmodule",
+    "bug_location": "Line 6: 'state' transition logic is flawed."
+  },
+  {
+    "cwe_id": "CWE-441",
+    "description": "Unintended Alteration of Control Logic Due to Incomplete Signal Prioritization.",
+    "code": "module control_logic(input wire high_priority, low_priority, output reg action);\n  always @(*) begin\n    if (low_priority) begin\n      action <= 1'b0;\n    end\n    if (high_priority) begin\n      action <= 1'b1; // Overwrites low_priority\n    end\n  end\nendmodule",
+    "bug_location": "Lines 4-6: Conflict between 'high_priority' and 'low_priority'."
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Use of Untrusted Source for Configuration",
+    "code": "module config(input wire clk, input wire [1:0] mode, output reg [7:0] config_reg);\nalways @(posedge clk) begin\n    config_reg <= (mode == 2'b11) ? 8'hFF : config_reg;\nend\nendmodule",
+    "bug_location": "line 3: mode == 2'b11"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Privileged Access and Context Management",
+    "code": "module access_control(input wire clk, input wire admin, output reg [3:0] access_level);\nalways @(posedge clk) begin\n    access_level <= admin ? 4'b1111 : access_level;\nend\nendmodule",
+    "bug_location": "line 3: admin ? 4'b1111"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Improper Access Control in Finite State Machine",
+    "code": "module fsm(input wire clk, input wire reset, output reg state);\nparameter IDLE = 1'b0, ACTIVE = 1'b1;\nalways @(posedge clk or posedge reset) begin\n    if (reset)\n        state <= IDLE;\n    else\n        state <= ACTIVE;\nend\nendmodule",
+    "bug_location": "line 6: state <= ACTIVE"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Non-compliance of Read-Only Design Constraint",
+    "code": "module readonly(input wire clk, input wire update, output reg [3:0] reg_out);\nalways @(posedge clk) begin\n    if (update)\n        reg_out <= 4'b1010;\nend\nendmodule",
+    "bug_location": "line 4: reg_out <= 4'b1010"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Sensitive Information Uncleared on Reset",
+    "code": "module sensitive_data(input wire clk, input wire reset, output reg [7:0] data_out);\nalways @(posedge clk or posedge reset) begin\n    if (reset)\n        data_out <= 8'hFF; // Should clear sensitive data\nend\nendmodule",
+    "bug_location": "line 4: data_out <= 8'hFF"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Unintuitive Parsing of Binary Data",
+    "code": "module bin_parser(input wire [3:0] data_in, output reg [1:0] value_out);\nalways @(*) begin\n    case (data_in)\n        4'b0001: value_out = 2'b01;\n        4'b0010: value_out = 2'b10;\n        default: value_out = 2'b11;\n    endcase\nend\nendmodule",
+    "bug_location": "line 5: default: value_out = 2'b11"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy",
+    "code": "module discrepancy(input wire clk, input wire error, output reg [1:0] status);\nalways @(posedge clk) begin\n    if (error)\n        status <= 2'b10;\n    else\n        status <= 2'b01;\nend\nendmodule",
+    "bug_location": "line 4: status <= 2'b10;"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Confidential Data Exposure through Public Resource",
+    "code": "module data_leak(input wire [3:0] key, output wire [3:0] public_data);\nassign public_data = key;\nendmodule",
+    "bug_location": "line 2: assign public_data = key"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Storage Implementing Incorrect Default Permissions",
+    "code": "module default_perm(input wire clk, output reg [7:0] perm_reg);\nalways @(posedge clk) begin\n    perm_reg <= 8'hFF;\nend\nendmodule",
+    "bug_location": "line 3: perm_reg <= 8'hFF"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Data",
+    "code": "module cleartext_transmission(input wire [7:0] sensitive_data, output wire [7:0] transmitted_data);\nassign transmitted_data = sensitive_data;\nendmodule",
+    "bug_location": "line 2: assign transmitted_data = sensitive_data"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "On-Chip Debug and Test Interface with Improper Access Control",
+    "code": "module test_interface(input wire clk, input wire [31:0] debug_signal);\n  reg [31:0] debug_register;\n  always @(posedge clk) begin\n    debug_register <= debug_signal;\n  end\nendmodule",
+    "bug_location": "line 4: debug_register is directly accessible without control signals"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a One-Way Function with a Predictable Salt",
+    "code": "module hash_function(input wire [7:0] data_in, output wire [7:0] hash_out);\n  reg [7:0] salt = 8'hFF; // predictable salt\n  assign hash_out = data_in ^ salt;\nendmodule",
+    "bug_location": "line 3: predictable salt used in hash function"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Improper Access Control in Registers Allowing Unexpected Connections",
+    "code": "module register_access(input wire clk, input wire write_enable, input wire [3:0] data_in, output reg [3:0] data_out);\n  reg [3:0] register;\n  always @(posedge clk) begin\n    if (write_enable) begin\n      register <= data_in;\n    end\n    data_out <= register;\n  end\nendmodule",
+    "bug_location": "line 7: data_out updating without access control"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Register Interface Allows Software Access to Sensitive Data",
+    "code": "module sensitive_register(input wire clk, input wire write_enable, input wire [7:0] data_in, output reg [7:0] code);\n  reg [7:0] sensitive_data = 8'hAC;\n  always @(posedge clk) begin\n    if (write_enable) begin\n      sensitive_data <= data_in;\n    end\n    code <= sensitive_data;\n  end\nendmodule",
+    "bug_location": "line 7: sensitive_data is accessible via code output without proper access checks"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Sensitive Information Uncleared Before Debug/Power State Transition",
+    "code": "module power_transition(input wire power_state, output reg [7:0] critical_data);\n  initial begin\n    if (power_state) begin\n      critical_data <= 8'hFF; // sensitive data\n    end\n  end\nendmodule",
+    "bug_location": "line 4: critical_data is not cleared before power transition"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Initialization of Register Leading to Leakage",
+    "code": "module init_issue(input wire clk, output reg [7:0] data_out);\n  initial begin\n    data_out = 8'hAB; // predefined value instead of random\n  end\nendmodule",
+    "bug_location": "line 2: data_out initialized with static value"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Information Exposure Through Debug Messages",
+    "code": "module debug_message(input wire clk, input wire [7:0] secret_data);\n  always @(posedge clk) begin\n    $display(\"Debug: Secret Data = %h\", secret_data);\n  end\nendmodule",
+    "bug_location": "line 4: debug message reveals secret data"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Resource Not Removed Before Reuse",
+    "code": "module reuse_resource(input wire clk, input wire reset, output reg [7:0] shared_data);\n  reg [7:0] temp_data;\n  always @(posedge clk or posedge reset) begin\n    if (reset) begin\n      shared_data <= 0;\n    end else begin\n      shared_data <= temp_data;\n    end\n  end\nendmodule",
+    "bug_location": "line 6: temp_data not cleared before reuse"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Use of Hardcoded Cryptographic Keys",
+    "code": "module crypto_key(input wire [7:0] data, output wire [7:0] encrypted_data);\n  reg [7:0] key = 8'hAA; // hardcoded key\n  assign encrypted_data = data ^ key;\nendmodule",
+    "bug_location": "line 3: hardcoded cryptographic key in use"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information",
+    "code": "module tx_module(input wire [7:0] payload, output wire [7:0] tx_data);\n  assign tx_data = payload; // sending sensitive info in clear\nendmodule",
+    "bug_location": "line 3: tx_data directly assigned from payload without encryption"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Incomplete Comparison Leading to Logic Flaw",
+    "code": "module comparator(input [3:0] a, b, output reg isEqual);\n  always @(*) begin\n    if (a == b) isEqual = 1;\n  end\nendmodule",
+    "bug_location": "Line 4 (Missing else condition)"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Manufacturing Backdoor Allowing Unauthorized Access",
+    "code": "module secure_module(input wire enable, input wire secret, output wire access);\n  assign access = enable | secret; // Potential backdoor\nendmodule",
+    "bug_location": "Line 3 (OR operation allows access bypass)"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Insufficient Isolation of Shared Resources",
+    "code": "module shared_resource(input clk, reset, wire [3:0] data_in, output reg [3:0] data_out);\n  reg [3:0] shared_var;\n  always @(posedge clk or posedge reset) begin\n    if (reset)\n      shared_var <= 4'b0;\n    else\n      shared_var <= data_in; // No separation between different users\n  end\nendmodule",
+    "bug_location": "Line 7 (shared_var can be accessed/modified by all users)"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Incorrect Handling of Clock Domain Crossing",
+    "code": "module clock_crossing(input clk_a, clk_b, input wire [7:0] data_in, output reg [7:0] data_out);\n  reg [7:0] sync_data;\n  always @(posedge clk_a) begin\n    sync_data <= data_in;\n  end\n  always @(posedge clk_b) begin\n    data_out <= sync_data;\n  end\nendmodule",
+    "bug_location": "Line 6 (Assumption of instant clock domain transfer)"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Sensitive Information Uncleared Before Debug/Power State Transition",
+    "code": "module secure_register(input wire clk, rst, dbg, input wire [7:0] secret, output reg [7:0] secure_out);\n  reg [7:0] internal_secret;\n  always @(posedge clk or posedge rst) begin\n    if (rst)\n      internal_secret <= 8'b0;\n    else\n      internal_secret <= secret;\n  end\n  always @(posedge dbg) begin\n    secure_out <= internal_secret;\n  end\nendmodule",
+    "bug_location": "Line 9 (internal_secret exposed during debug)"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Protection Against Hardware Reverse Engineering",
+    "code": "module calc(input wire [3:0] key, input wire [3:0] data, output wire [3:0] result);\n  wire [3:0] encryption_key = 4'd9; // Hardcoded key\n  assign result = data ^ encryption_key;\nendmodule",
+    "bug_location": "Line 3 (Hardcoded key vulnerable to reverse engineering)"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Unintentional Information Disclosure",
+    "code": "module data_check(input wire [3:0] ctrl_sig, output reg data_valid);\n  always @(*) begin\n    if (ctrl_sig[0] == 1)\n      data_valid = 1;\n    else\n      data_valid = 0;\n  end\nendmodule",
+    "bug_location": "Line 5 (Disclosure through control signal manipulation)"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Data Left in Accessible Memory",
+    "code": "module mem_storage(input wire clk, input wire [7:0] input_data, output reg [7:0] output_data);\n  reg [7:0] buffer;\n  always @(posedge clk) begin\n    buffer <= input_data;\n    output_data <= buffer;\n  end\nendmodule",
+    "bug_location": "Line 5 (Data remains in buffer indefinitely)"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Use of Potentially Misleading Information",
+    "code": "module misleading_indicator(input wire valid_data, output reg status_led);\n  always @(*) begin\n    if (valid_data)\n      status_led = 1;\n    else\n      status_led = 0; // LED used for multiple indicators\n  end\nendmodule",
+    "bug_location": "Line 5 (Status LED can indicate multiple states misleadingly)"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information",
+    "code": "module transmit(input wire clk, input wire [15:0] sensitive_info, output wire transmit_signal);\n  reg [15:0] send_buffer;\n  always @(posedge clk) begin\n    send_buffer <= sensitive_info;\n    transmit_signal <= ~send_buffer[0]; // Mock transmission\n  end\nendmodule",
+    "bug_location": "Line 5 (Sensitive info sent without encryption)"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a Broken or Risky Cryptographic Algorithm",
+    "code": "module crypto(input clk, input [127:0] key, input [127:0] data, output reg [127:0] encrypted);\nalways @(posedge clk) begin\n  encrypted <= data ^ key; // XOR used as encryption\nend\nendmodule",
+    "bug_location": "Line 4: encrypted <= data ^ key;"
+  },
+  {
+    "cwe_id": "CWE-440",
+    "description": "Expected Security Mechanism Disabled",
+    "code": "module security(input wire enable, input wire clk, output reg [3:0] state);\nalways @(posedge clk) begin\n  if (~enable)  // Security mechanism disabled\n    state <= 4'd0; // Default state\n  else\n    state <= 4'd1; // Secure state\nend\nendmodule",
+    "bug_location": "Line 3: if (~enable)"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Sensitive Information Written to Log File",
+    "code": "module logger(input wire [7:0] data, input wire clk, output reg log_output);\nalways @(posedge clk) begin\n  if (data == 8'hFF) // Sensitive info check\n    log_output <= data; // Logging sensitive data\nend\nendmodule",
+    "bug_location": "Line 4: log_output <= data;"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Improper Data Initialization",
+    "code": "module init_error(input wire clk, output reg [3:0] count);\ninitial begin\n  count = 4'hF; // Improper initial value\nend\nalways @(posedge clk) begin\n  count <= count + 1;\nend\nendmodule",
+    "bug_location": "Line 3: count = 4'hF;"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper Input Validation",
+    "code": "module input_check(input wire [7:0] data, output reg valid);\nalways @(*) begin\n  valid <= (data > 10 && data < 40) ? 1'b1 : 1'b0; // Missing inclusive check\nend\nendmodule",
+    "bug_location": "Line 3: data > 10 && data < 40"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Deeply Nested and Complex Control Flow",
+    "code": "module complex_flow(input wire [3:0] a, b, c, output wire [3:0] out);\nassign out = (a > b) ? ((b > c) ? a : b) : ((a < c) ? c : b); // Nested ternary\nendmodule",
+    "bug_location": "Line 2: Nested ternary operations"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Storage of Sensitive Information",
+    "code": "module secure_storage(input wire [31:0] password, input wire clk, output reg [31:0] stored);\nalways @(posedge clk) begin\n  stored <= password; // Storing sensitive info in cleartext\nend\nendmodule",
+    "bug_location": "Line 4: stored <= password;"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy",
+    "code": "module discrepancy(input wire [7:0] secret, input wire valid, output reg flag);\nalways @(*) begin\n  if (valid) begin\n    if (secret == 8'hAA) // Magic value comparison\n      flag <= 1;\n    else\n      flag <= 0;\n  end\nend\nendmodule",
+    "bug_location": "Line 5: if (secret == 8'hAA)"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Security Check Missing or Incomplete",
+    "code": "module missing_check(input wire authorized, output wire access);\nassign access = authorized; // No verification of authorization\nendmodule",
+    "bug_location": "Line 2: assign access = authorized;"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step",
+    "code": "module crypto_step(input wire [31:0] data, input wire clk, output reg [31:0] encrypted);\nalways @(posedge clk) begin\n  encrypted <= data; // Encryption step missing\nend\nendmodule",
+    "bug_location": "Line 4: encrypted <= data;"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Sensitive state information exposed through debug port.",
+    "code": "module debug_interface(input wire [3:0] debug_sel, output wire [31:0] debug_data);\n    reg [31:0] secret_key = 32'hCAFEBABE; // Sensitive Data\n    assign debug_data = (debug_sel == 4'b0001) ? secret_key : 32'b0;\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Fault in reset logic can lead to undefined state.",
+    "code": "module faulty_reset(input wire clk, input wire rst, output reg led);\n    always @(posedge clk) begin\n        if (rst) begin\n            // Faulty initial assignment\n            led <= 1'bx;\n        end else begin\n            led <= ~led;\n        end\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-441",
+    "description": "Improper synchronization can cause data inconsistency.",
+    "code": "module async_fifo(input wire wr_clk, rd_clk, input wire [7:0] wr_data, output wire [7:0] rd_data);\n    reg [7:0] fifo_mem [0:15];\n    reg [3:0] wr_ptr = 0;\n    reg [3:0] rd_ptr = 0;\n    assign rd_data = fifo_mem[rd_ptr];\n    always @(posedge wr_clk) begin\n        fifo_mem[wr_ptr] <= wr_data;\n        wr_ptr <= wr_ptr + 1;\n    end\n    always @(posedge rd_clk) begin\n        rd_ptr <= rd_ptr + 1;\n    end\nendmodule",
+    "bug_location": "Line 9"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper access control allowing write access to critical register.",
+    "code": "module control_reg(input wire [1:0] user_mode, input wire reg_write, input wire [7:0] data_in, output reg [7:0] control);\n    always @(*) begin\n        // Insecure check: allows update in user_mode 1\n        if (user_mode != 2'b11 && reg_write) begin\n            control = data_in;\n        end\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-440",
+    "description": "Expected behavior not maintained under all input conditions.",
+    "code": "module counter(input wire clk, rst, output reg [2:0] count);\n    always @(posedge clk or negedge rst) begin\n        if (!rst) begin\n            count <= 3'b0;\n        end else begin\n            // Missing reset condition\n            count <= count + 1;\n        end\n    end\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Use of cryptographically weak random number generator.",
+    "code": "module weak_rng(output reg [31:0] rnd_number, input wire clk);\n    reg [31:0] lfsr = 32'h1;\n    always @(posedge clk) begin\n        lfsr <= {lfsr[30:0], lfsr[31]^lfsr[21]^lfsr[1]^lfsr[0]};\n        rnd_number <= lfsr;\n    end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Cryptographic key used without hashing.",
+    "code": "module transmit(input wire [31:0] key, input wire [7:0] data, output reg [7:0] encrypted_data);\n    always @(*) begin\n        // Missing hashing before encryption\n        encrypted_data = data ^ key[7:0];\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Exposing sensitive data inappropriately through test circuitry.",
+    "code": "module test_circuit(input wire test_mode, output wire [15:0] test_data);\n    reg [15:0] confidential_data = 16'hDEAD;\n    always @(*) begin\n        if (test_mode)\n            test_data = confidential_data; // Exposing sensitive data\n        else\n            test_data = 16'h0;\n    end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable discrepancy created by debug flags affecting conditional paths.",
+    "code": "module debug_output(input wire debug_en, output reg result);\n    reg [3:0] state = 0;\n    always @(*) begin\n        if (debug_en)\n            result = (state == 4'b0110); // Debug mode changes outcome\n        else\n            result = (state == 4'b0011);\n    end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper handling of unexpected input causes overflow in counter.",
+    "code": "module overflow_counter(input wire clk, rst, input wire [1:0] inc, output reg [2:0] count);\n    always @(posedge clk or negedge rst) begin\n        if (!rst) begin\n            count <= 3'b0;\n        end else begin\n            count <= count + inc; // Might overflow if inc > 'b11\n        end\n    end\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "On-Chip Debug Interface accessible without authentication.",
+    "code": "module debug_interface(input wire clk, input wire debug_enable, output reg [7:0] debug_data);\n  always @(posedge clk) begin\n    if (debug_enable) begin\n      debug_data <= 8'hFF; // Problematic access\n    end\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Weak implementation of XOR-based encryption.",
+    "code": "module weak_encryption(input wire [7:0] data_in, input wire [7:0] key, output wire [7:0] data_out);\n  assign data_out = data_in ^ key; // Risky primitive\nendmodule",
+    "bug_location": "Line 2"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Sensitive register exposed directly in test mode.",
+    "code": "module test_mode_control(input wire test_enable, output reg [3:0] secret_reg);\n  always @(*) begin\n    if (test_enable) begin\n      secret_reg = 4'b1010; // Exposed secret\n    end\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Externally writable register without proper checks.",
+    "code": "module control_register(input wire clk, input wire write_enable, input wire [7:0] data_in, output reg [7:0] control_reg);\n  always @(posedge clk) begin\n    if (write_enable) begin\n      control_reg <= data_in; // No protection\n    end\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Improper isolation of sensitive clock domain.",
+    "code": "module clock_isolation(input wire clk_a, input wire clk_b, input wire data_in, output reg data_out);\n  always @(posedge clk_a or posedge clk_b) begin\n    data_out <= data_in; // Inadequate isolation\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Insecure memory initialization can expose prior data.",
+    "code": "module memory_init(output reg [15:0] memory);\n  initial begin\n    memory = 16'h0000; // Default without randomization\n  end\nendmodule",
+    "bug_location": "Line 2"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Sensitive information leaked through unmasked status signals.",
+    "code": "module status_signal(input wire error, output wire [7:0] status);\n  assign status = (error) ? 8'hFF : 8'h00; // Leak detected\nendmodule",
+    "bug_location": "Line 2"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Race condition due to improper signal synchronization.",
+    "code": "module race_condition(input wire clk1, input wire clk2, input wire data_in, output reg data_out);\n  always @(posedge clk1 or posedge clk2) begin\n    data_out <= data_in; // Simultaneous assignments danger\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Default permissions allow unauthorized access to configuration register.",
+    "code": "module config_reg(input wire [7:0] data_in, output reg [7:0] config_out);\n  always @(*) begin\n    config_out = data_in; // No permission check\n  end\nendmodule",
+    "bug_location": "Line 2"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Insufficient randomness for cryptographic purposes.",
+    "code": "module weak_rng(output reg [7:0] random_number);\n  always @(*) begin\n    random_number = $random; // Standard RNG\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Insecure Default Initialization",
+    "code": "module insecure_init(input clk, input rst_n, output reg [7:0] data);\n    always @(posedge clk or negedge rst_n) begin\n        if (!rst_n)\n            data <= 8'hFF; // Should be 0\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of Uninitialized Variable",
+    "code": "module use_uninit(input clk, output reg out);\n    reg flag;\n    always @(posedge clk) begin\n        if (flag) // flag is never initialized\n            out <= 1;\n        else\n            out <= 0;\n    end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Overlapping Physical Ranges in Memory Map",
+    "code": "module memory_overlap(input [31:0] addr, output reg [7:0] data_out);\n    always @(*) begin\n        if (addr >= 32'h0000 & addr <= 32'h0FFF)\n            data_out <= 8'hAA;\n        else if (addr >= 32'h0800 & addr <= 32'h0FFF) // Overlap with previous range\n            data_out <= 8'hBB;\n        else\n            data_out <= 8'h00;\n    end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Missing Lock Mechanism",
+    "code": "module no_lock_access(input clk, input write_en, input [7:0] din, output reg [7:0] dout);\n    reg [7:0] mem;\n    always @(posedge clk) begin\n        if (write_en) begin\n            // Missing access lock here\n            mem <= din;\n        end\n        dout <= mem;\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Information Exposure Through Output Value",
+    "code": "module info_exposure(input clk, input [7:0] secret, output reg [7:0] debug_value);\n    always @(posedge clk) begin\n        if (debug_value == 0)\n            debug_value <= secret; // Exposes secret via debug_value\n    end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Inadequate Encryption Strength",
+    "code": "module weak_encryption(input clk, input [7:0] data_in, output reg [7:0] encrypted_out);\n    always @(posedge clk) begin\n        encrypted_out <= data_in ^ 8'hFF; // Weak XOR encryption\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Incorrect Default Permissions",
+    "code": "module default_perms(input user_read, input user_write, output reg permission_granted);\n    initial begin\n        permission_granted = 1'b1; // Incorrect default permission\n    end\n    always @(*) begin\n        if (user_read || user_write)\n            permission_granted = 1'b0;\n    end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Internal Asset Exposed to Unsafe Debug Access Level or State",
+    "code": "module unsafe_debug_access(input wire [7:0] internal_data, output wire [7:0] debug_out);\n    assign debug_out = internal_data; // Exposes internal_data\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information",
+    "code": "module cleartext_transmit(input wire clk, input wire [7:0] sensitive_data, output reg [7:0] network_out);\n    always @(posedge clk) begin\n        network_out <= sensitive_data; // No encryption used for transmission\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step",
+    "code": "module no_hash(input wire clk, input wire [127:0] data_in, output reg [127:0] data_out);\n    always @(posedge clk) begin\n        data_out <= data_in; // Missing hashing step\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "On-Chip Debug and Test Interface With Improper Access Control",
+    "code": "module debug_interface(input wire enable, input wire [31:0] data_in, output reg [31:0] data_out);\n    always @(posedge enable) begin\n        data_out <= data_in; // No access control\n    end\nendmodule",
+    "bug_location": "line 3"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a Cryptographic Primitive with a Risky Implementation",
+    "code": "module weak_rng(output reg [7:0] random_out);\n    always @(posedge clk) begin\n        random_out <= $random; // Weak PRNG\n    end\nendmodule",
+    "bug_location": "line 3"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Improper Data Locking and Management Errors",
+    "code": "module data_lock(input wire [7:0] data_in, output reg [7:0] data_out);\n    always @(posedge clk) begin\n        // Missing lock mechanism\n        data_out <= data_in;\n    end\nendmodule",
+    "bug_location": "line 2"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Insecure Memory Components",
+    "code": "module insecure_memory(input wire [3:0] addr, output reg [7:0] data_out);\n    reg [7:0] mem [0:15];\n    always @(addr) begin\n        data_out <= mem[addr];  // Lack of access control\n    end\nendmodule",
+    "bug_location": "line 4"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Sensitive Information in Insecure Context",
+    "code": "module sensitive_data(output reg [31:0] data_out);\n    always @(posedge clk) begin\n        data_out <= 32'hDEADBEEF; // Plain sensitive data\n    end\nendmodule",
+    "bug_location": "line 3"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Handling of Exceptional Conditions",
+    "code": "module error_handling(input wire [31:0] input_data, output reg [31:0] output_data);\n    always @(input_data) begin\n        output_data <= input_data / 0; // Division by zero\n    end\nendmodule",
+    "bug_location": "line 4"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Information Exposure Through Debugging Interface",
+    "code": "module debug_expose(input wire en, input wire [15:0] secret_data, output reg [15:0] debug_out);\n    always @(posedge en) begin\n        debug_out <= secret_data; // Exposes secret data\n    end\nendmodule",
+    "bug_location": "line 3"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information Exposure due to Improper Access Control",
+    "code": "module access_control(input wire [3:0] id, output reg access_granted);\n    always @(id) begin\n        access_granted <= 1; // No validation on ID\n    end\nendmodule",
+    "bug_location": "line 3"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Incorrect Default Permissions",
+    "code": "module permissions_control(input wire [3:0] user_id, output reg access);\n    initial begin\n        access = 1; // Default to granted access\n    end\nendmodule",
+    "bug_location": "line 3"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Data",
+    "code": "module cleartext_transmit(input wire [7:0] sensitive_data, output reg [7:0] transmitted_data);\n    always @(posedge clk) begin\n        transmitted_data <= sensitive_data; // Transmit in cleartext\n    end\nendmodule",
+    "bug_location": "line 3"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Inadequate access control for JTAG interface allowing unauthorized debugging.",
+    "code": "module jtag_interface(input wire tck, input wire tdi, output wire tdo);\n    always @(posedge tck) begin\n        // No access control check\n    end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a weak pseudo-random number generator for cryptographic key generation.",
+    "code": "module weak_prng(input wire clk, output reg [7:0] prng_out);\n    reg [7:0] state = 8'hAA;\n    always @(posedge clk) begin\n        state <= {state[6:0], state[7] ^ state[5]};\n        prng_out <= state;\n    end\nendmodule",
+    "bug_location": "state <= {state[6:0], state[7] ^ state[5]};"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Incorrectly clearing sensitive data allows potential data recovery.",
+    "code": "module data_module(input wire clk, output reg [7:0] sensitive_data);\n    always @(posedge clk) begin\n        sensitive_data <= 8'h00; // Incorrect clearing\n    end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Improper use of clock gating leading to unintended behavior.",
+    "code": "module clock_gating(input wire clk, en, output wire gclk);\n    assign gclk = clk && en;\nendmodule",
+    "bug_location": "assign gclk = clk && en;"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Use of unencrypted data transmission for sensitive information.",
+    "code": "module unencrypted_transmission(input wire [7:0] data_in, output wire tx);\n    assign tx = data_in[0]; // Data sent unencrypted\nendmodule",
+    "bug_location": "assign tx = data_in[0];"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing encryption step in data processing pipeline.",
+    "code": "module data_pipeline(input wire [7:0] data_in, output wire [7:0] data_out);\n    assign data_out = data_in; // Missing encryption\nendmodule",
+    "bug_location": "assign data_out = data_in;"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Non-sanitized resource reuse allowing sensitive data exposure.",
+    "code": "module resource_reuse(input wire clk, output reg [7:0] buffer);\n    always @(posedge clk) begin\n        buffer <= 8'hFF; // Non-sanitized reuse\n    end\nendmodule",
+    "bug_location": "buffer <= 8'hFF;"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Incorrect default permissions in a memory-mapped I/O instance.",
+    "code": "module mmio(input wire [7:0] addr, output reg [7:0] data);\n    reg [7:0] memory [0:255];\n    initial begin\n        memory[0] = 8'h00; // Public access\n    end\n    always @(addr) begin\n        data = memory[addr];\n    end\nendmodule",
+    "bug_location": "memory[0] = 8'h00;"
+  },
+  {
+    "cwe_id": "CWE-440",
+    "description": "Software protection mechanism disabled inadvertently in hardware.",
+    "code": "module protection_module(input wire enable);\n    wire protection_active;\n    assign protection_active = enable; // Should not be directly linked\nendmodule",
+    "bug_location": "assign protection_active = enable;"
+  },
+  {
+    "cwe_id": "CWE-441",
+    "description": "Weak password hashing in hardware with minimal iterations and no salt.",
+    "code": "module weak_hash(input wire [7:0] password, output reg [7:0] hash_out);\n    reg [7:0] hash = 8'h00;\n    always @(password) begin\n        hash <= password ^ 8'hAA; // Weak hashing\n    end\n    assign hash_out = hash;\nendmodule",
+    "bug_location": "hash <= password ^ 8'hAA;"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Improper Control of Debugging Information",
+    "code": "module secret_module(input logic clk, input logic [7:0] data, output logic [7:0] secret_key);\nalways_ff @(posedge clk) begin\n    // Debugging backdoor\n    $display(\"Secret Key: %h\", secret_key);\n    secret_key <= data + 8'hA5;\nend\nendmodule",
+    "bug_location": "Line 4: $display statement leaks secret_key."
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of Weak Cryptographic Algorithm for Encryption",
+    "code": "module weak_encryption(input logic [7:0] plaintext, output logic [7:0] ciphertext);\nassign ciphertext = plaintext ^ 8'hFF; // Simple XOR operation\nendmodule",
+    "bug_location": "Line 2: Use of XOR as an encryption algorithm."
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Security Issue in Random Number Generation",
+    "code": "module weak_rng(output logic [3:0] random_number);\ninitial begin\n    random_number = $urandom_range(15, 0) & 4'hF; // Reduced randomness\nend\nendmodule",
+    "bug_location": "Line 3: Insecure RNG with insufficient entropy."
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Missing Protection Against Fault Injection",
+    "code": "module fault_vulnerable(input logic [3:0] control, output logic [3:0] result);\nalways_comb begin\n    if (control == 4'b0001) begin\n        result = 4'b1111;\n    end else begin\n        result = control;\n    end\nend\nendmodule",
+    "bug_location": "Line 3: No fault injection protection when checking control."
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Improper Execution Order Control",
+    "code": "module order_control(input logic start, output logic done);\nalways_ff @(posedge start) begin\n    done <= 1'b0;\n    // Critical operation\n    done <= 1'b1;\nend\nendmodule",
+    "bug_location": "Line 4: Incorrect state transition order."
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Handling of Insufficient Permissions/Privileged Access",
+    "code": "module privilege_check(input logic [15:0] user_id, output logic access_granted);\nalways_comb begin\n    // Grant access without proper check\n    access_granted = (user_id[15:8] == 8'hFF);\nend\nendmodule",
+    "bug_location": "Line 3: Improper check of user_id for granting access."
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Information Exposure Through Timing Discrepancy",
+    "code": "module timing_leak(input logic [7:0] a, input logic [7:0] b, output logic match);\nalways_comb begin\n    match = (a == b);\n    if (match) begin\n        // Delay added for non-matches\n        #10;\n    end\nend\nendmodule",
+    "bug_location": "Lines 4-6: Time discrepancy exposes match information."
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Debug Resource",
+    "code": "module debug_leak(input logic [7:0] sensitive_data);\nalways_ff @(posedge clk) begin\n    // Debug information leaking sensitive data\n    $fwrite(f, \"Data: %h\\n\", sensitive_data);\nend\nendmodule",
+    "bug_location": "Line 4: $fwrite leaks sensitive_data."
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Incorrect Default Permissions Setting",
+    "code": "module default_permission(input logic req, output logic granted);\ninitial begin\n    // Allow all by default\n    granted = 1'b1;\nend\nalways_ff @(posedge req) begin\n    granted <= ~granted;\nend\nendmodule",
+    "bug_location": "Line 3: Default permission set to grant access."
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Insecure Cryptographic Storage",
+    "code": "module insecure_storage(input logic [127:0] key, output logic stored);\nreg [127:0] key_storage;\nalways_ff @(posedge clk) begin\n    // Store key insecurely in plaintext\n    key_storage <= key;\nend\nassign stored = |key_storage;\nendmodule",
+    "bug_location": "Line 5: Storing key without encryption."
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Data Propagation Delay Mismanagement",
+    "code": "module dflipflop(\n    input clk,\n    input d,\n    output reg q\n);\n\nalways @(posedge clk)\nbegin\n    #5 q <= d; // Unexpected delay insertion\nend\n\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Improper Cryptographic Key Handling",
+    "code": "module aes_key_expansion(\n    input [127:0] aes_key,\n    output reg [127:0] exp_key\n);\n\nalways @(*)\nbegin\n    exp_key = aes_key; // Direct usage without transformation\nend\n\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Misconfiguration of Security Modes",
+    "code": "module security_mode(\n    input wire default_mode,\n    output reg current_mode\n);\n\nalways @(default_mode)\nbegin\n    if(default_mode)\n        current_mode = 1'b0; // Incorrect default assignment\nend\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Information Exposure Through Timing Discrepancy",
+    "code": "module compare(\n    input [7:0] a,\n    input [7:0] b,\n    output reg match\n);\n\nalways @(*)\nbegin\n    match = (a == b) ? 1'b1 : 1'b0; // Timing difference leaks info\nend\n\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Improper Input Validation",
+    "code": "module input_check(\n    input signed [7:0] data,\n    output reg valid\n);\n\nalways @(*)\nbegin\n    if(data >= 0)  // Fails to check upper bound\n        valid = 1;\n    else\n        valid = 0;\nend\n\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Use of Privileged Instructions",
+    "code": "module load_flags(\n    output reg flags\n);\n\nalways @(*)\nbegin\n    // Attempt to access privileged system register\n    xor(flags, flags); \nend\n\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information",
+    "code": "module transmit(\n    input [7:0] data,\n    output reg wire_line\n);\n\nalways @(*)\nbegin\n    // Transmitting data directly in clear\n    wire_line = data;\nend\n\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step in Data Processing",
+    "code": "module encryption(\n    input [127:0] data,\n    output reg [127:0] encrypted\n);\n\nalways @(*)\nbegin\n    // Direct assignment without encryption\n    encrypted = data;\nend\n\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-440",
+    "description": "Race Condition in Register Access",
+    "code": "module race_cond(\n    input clk,\n    input d,\n    output reg q\n);\n\nalways @(posedge clk)\nbegin\n    if(d) q <= 1'b1; // Race condition leads to unexpected state\nend\n\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-441",
+    "description": "Improper Handling of Debug Information",
+    "code": "module debug_data(\n    input [7:0] secret_data,\n    output reg [7:0] debug_out\n);\n\nalways @(*)\nbegin\n    debug_out = secret_data; // Should mask or not expose directly\nend\n\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "On-Chip Debug and Test Interface With Improper Access Control",
+    "code": "module debug_interface(input wire clk, input wire [31:0] data_in, output reg [31:0] data_out);\n  always @(posedge clk) begin\n    data_out <= data_in; // Debug interface accessible without secure check\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a One-Way Channel Without Authentication",
+    "code": "module uart_interface(input wire rx, output wire tx);\n  always @(posedge rx) begin\n    tx <= rx; // Lack of authentication for received data\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Improper Access Control for Memory Buffer",
+    "code": "module memory_access(input wire [7:0] address, input wire [7:0] write_data, output reg [7:0] read_data);\n  reg [7:0] memory [0:255];\n  always @* begin\n    read_data = memory[address]; // No control over memory access\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Hardware Logic Contains Race Condition Vulnerability",
+    "code": "module race_condition(input wire clk, output reg flag);\n  reg a, b;\n  always @(posedge clk) begin\n    a <= b;\n    b <= a; // Race condition between a and b\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Sensitive Data Not Initialized",
+    "code": "module sensitive_data_storage(output reg [127:0] key);\n  initial begin\n    // Key not initialized properly\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Isolation of Shared Resources on the Cloud",
+    "code": "module shared_resource(input wire req, output wire grant);\n  reg [127:0] shared_memory;\n  always @* begin\n    if (req) begin\n      grant <= shared_memory[0]; // Shared resource not isolated\n    end\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy",
+    "code": "module discrepancy_check(input wire a, b, output reg result);\n  always @* begin\n    result <= (a == b); // Potential for timing attack\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Data Sent to Out-of-Bounds Register",
+    "code": "module register_access(input wire [31:0] data, output reg sensitive_output);\n  reg [31:0] reg_file [0:15];\n  always @* begin\n    if (data[4:0] > 15) begin\n      sensitive_output <= 1; // Out-of-bounds access reveals data\n    end\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information",
+    "code": "module transmission(input wire [7:0] sensitive_data, output wire transmitted_data);\n  assign transmitted_data = sensitive_data; // Data transmitted in cleartext\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step",
+    "code": "module encryption(input wire [127:0] plaintext, output reg [127:0] ciphertext);\n  always @* begin\n    ciphertext <= plaintext; // Missing encryption step\n  end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "On-Chip Debug and Test Interface With Improper Access Control",
+    "code": "module debug_interface(input wire [31:0] data_in, output wire [31:0] data_out);\n    assign data_out = data_in; // Debug access without control check\nendmodule",
+    "bug_location": "Line 2"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a One-Way Hash with a Predictable Salt",
+    "code": "module password_hash(input wire [31:0] password, output reg [31:0] hash);\n    always @(*) begin\n        hash = password ^ 32'h5A5A5A5A; // Simple XOR with predictable constant\n    end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Internal Asset Exposed to Unsafe Debug Access Level or State",
+    "code": "module debug_access(input wire [31:0] secret_key, output wire [31:0] debug_out);\n    assign debug_out = secret_key; // Exposing secret key via debug interface\nendmodule",
+    "bug_location": "Line 2"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Missing Combinatorial Logic Output Latch",
+    "code": "module logic_latch(input wire a, b, c, output reg result);\n    always @(a or b) begin\n        // Missing latch for storing result\n        result = a & b;\n    end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Inadequate Data Permission Level",
+    "code": "module memory_control(input wire [31:0] user_data, output reg [31:0] memory_out);\n    reg [31:0] memory;\n    always @(*) begin\n        memory = user_data; // Direct user data access to memory without checks\n        memory_out = memory;\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Isolation of Shared Resources on Integrated Circuit",
+    "code": "module shared_resource(input wire a, b, output reg result);\n    reg state;\n    always @(*) begin\n        if (a && !b) state = 1;\n        result = state; // Shared resource not properly isolated\n    end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy",
+    "code": "module secure_comparator(input wire [31:0] value1, value2, output reg equal);\n    always @(*) begin\n        equal = (value1 == value2); // Timing difference reveals value \n    end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Resource Not Removed Before Reuse",
+    "code": "module memory_reuse(input wire clk, output reg [31:0] data);\n    reg [31:0] internal_data;\n    always @(posedge clk) begin\n        data <= internal_data; // Internal data not cleared before reuse\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper Execution Isolation",
+    "code": "module process_isolation(input wire clk, input wire [31:0] input_data, output reg isolated);\n    reg internal_state;\n    always @(posedge clk) begin\n        if (input_data[0]) internal_state <= 1;\n        isolated <= internal_state; // No isolation checks on input_data\n    end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information",
+    "code": "module transmitter(input wire [31:0] sensitive_data, output wire [31:0] out);\n    assign out = sensitive_data; // No encryption applied during transmission\nendmodule",
+    "bug_location": "Line 2"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Access to Protected Resource Using Insecure Channel",
+    "code": "module insecure_access(input wire clk, reset, input wire [7:0] data, output wire [7:0] out);\n    reg [7:0] secret_key;\n    always @(posedge clk) begin\n        if (reset)\n            secret_key <= 8'b00000000;\n        else\n            out <= data ^ secret_key;  // Insecure handling of secret key\n    end\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a One-Way Hash with a Predictable Salt",
+    "code": "module hash_with_predictable_salt(input wire [7:0] user_input, output wire [7:0] hash_output);\n    reg [7:0] salt = 8'hFF;  // Predictable salt value\n    always @(*) begin\n        hash_output = user_input ^ salt;\n    end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Internal Asset Exposed to Unsafe Debug Access Level or State",
+    "code": "module exposed_debug(input wire clk, enable, output wire [7:0] status);\n    reg [7:0] secret_register;\n    always @(posedge clk) begin\n        if (enable)\n            status <= secret_register;  // Debug access exposes secret\n    end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')",
+    "code": "module path_traversal(input wire [3:0] command, output reg valid_path);\n    always @(*) begin\n        case (command)\n            4'b0000: valid_path = 1; // Open restricted folder\n            4'b1111: valid_path = 1; // Open unrestricted folder\n            default: valid_path = 0;\n        endcase\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Sensitive Data under Wrong Scope of Control",
+    "code": "module sensitive_control(input wire load, input wire [7:0] data, output reg [7:0] secure_memory);\n    always @(posedge load) begin\n        secure_memory <= data;  // Exposed to unsecured load signal\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Protection Against Hardware Reverse Engineering",
+    "code": "module reverse_engineer_protection(input wire [7:0] confidential_data, output wire [7:0] obfuscated_data);\n    reg [7:0] obfuscate_key = 8'hA5;\n    always @(*) begin\n        obfuscated_data = confidential_data ^ obfuscate_key;  // Weak obfuscation\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy",
+    "code": "module observable_discrepancy(input wire [7:0] input_data, output reg output_signal);\n    always @(*) begin\n        if (input_data == 8'hFF)\n            output_signal = 1;  // Reveals internal data state\n        else\n            output_signal = 0;\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Resource Not Removed Before Reuse",
+    "code": "module sensitive_reuse(input wire clear, input wire [7:0] data, output reg [7:0] buffer);\n    always @(*) begin\n        if (clear)\n            buffer <= 8'b0;  // Clear not ensuring full removal\n        else\n            buffer <= data;\n    end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper Permission Assignment for Critical Resource",
+    "code": "module permission_assignment(input wire [3:0] user_role, output reg access_granted);\n    always @(*) begin\n        if (user_role == 4'b1111)\n            access_granted = 1;  // Critical permissions assigned without verification\n        else\n            access_granted = 0;\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information",
+    "code": "module cleartext_transmission(input wire clk, input wire [7:0] sensitive_data, output reg [7:0] out);\n    always @(posedge clk) begin\n        out <= sensitive_data;  // Sensitive data sent without encryption\n    end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Failure to Disable Test Features leads to unauthorized access.",
+    "code": "module test_access(input logic enable, output logic unauthorized_access);\n   always_ff @(posedge enable) begin\n      if (enable) begin\n         unauthorized_access = 1'b1;  // Bug: Test access not properly disabled\n      end\n   end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a Cryptographic Primitive with a Risky Implementation may compromise security.",
+    "code": "module risky_crypto(input logic clk, input logic data_in, output logic [7:0] data_out);\n   logic [7:0] key = 8'hFF;  // Insecure key\n   always_ff @(posedge clk) begin\n      data_out <= data_in ^ key;  // Bug: Simple XOR operation\n   end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Improper Serialization leads to potential data integrity issues.",
+    "code": "module improper_serialization(input logic [7:0] data, output logic serial_out);\n   integer i;\n   always_comb begin\n      for (i = 0; i < 8; i=i+1) begin\n         serial_out = data[i];  // Bug: Mis-synchronization might occur\n      end\n   end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Improper Update of Reference Count leads to memory leaks or crashes.",
+    "code": "module ref_count(input logic request, input logic release, output logic [3:0] ref_counter);\n   always_ff @(posedge request or posedge release) begin\n      if (request) ref_counter <= ref_counter + 1;\n      else if (release) begin\n         ref_counter <= ref_counter - 1;  // Bug: No check for underflow\n      end\n   end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Use of Insufficiently Random Values leads to predictable outcomes.",
+    "code": "module weak_random(input logic clk, output logic [3:0] rand_val);\n   always_ff @(posedge clk) begin\n      rand_val <= rand_val + 1;  // Bug: Predictable sequence\n   end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Protection of a Cryptographic Key leads to exposure.",
+    "code": "module unprotected_key(input logic [7:0] secret_key, input logic access, output logic [7:0] out_key);\n   always_ff @(posedge access) begin\n      out_key <= secret_key;  // Bug: Key exposed without protection\n   end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy reveals sensitive information through timing.",
+    "code": "module timing_discrepancy(input logic [7:0] password, input logic [7:0] user_input, output logic match);\n   integer i;\n   always_comb begin\n      match = 1'b1;\n      for (i = 0; i < 8; i=i+1) begin\n         if (password[i] != user_input[i]) match = 1'b0; // Bug: Timing leak based on match\n      end\n   end\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Data Exposure Through Timing Discrepancy.",
+    "code": "module sensitive_timing(input logic [15:0] secure_data, output logic condition_met);\n   always_comb begin\n      if (secure_data == 16'hABCD)  // Bug: Time taken based on data\n         condition_met = 1'b1;\n      else\n         condition_met = 1'b0;\n   end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Insecure Default Initialization might lead to unwanted behavior.",
+    "code": "module insecure_init(output logic [3:0] config);\n   initial begin\n      config = 4'h0;  // Bug: Weak default configuration\n   end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step leads to insecure transmission.",
+    "code": "module insecure_transmission(input logic [31:0] data_in, output logic [31:0] encrypted_data);\n   always_comb begin\n      encrypted_data = data_in;  // Bug: Data not actually encrypted\n   end\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Improper Control of a Multiplexer Selection Signal",
+    "code": "module mux_bug(input wire a, b, sel, output wire out);\n    assign out = sel ? a : b;\nendmodule",
+    "bug_location": "sel"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of Uninitialized Signals",
+    "code": "module uninitialized_register(input wire clk, reset, output reg done);\n    reg [3:0] counter;\n    always @(posedge clk or posedge reset) begin\n        if (reset) begin\n            done <= 0;\n        end else if (counter == 4'd9) begin\n            done <= 1;\n        end\n        counter <= counter + 1;\n    end\nendmodule",
+    "bug_location": "counter"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Improper Verification of Source Information in Register Transfers",
+    "code": "module input_check(input wire [7:0] data, input wire valid, output reg ready);\n    always @* begin\n        if (valid) begin\n            ready = 1;\n        end else begin\n            ready = 0;\n        end\n    end\nendmodule",
+    "bug_location": "valid"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Race Condition in Register Transfers",
+    "code": "module race_condition(input wire clk, d, output reg q1, q2);\n    always @(posedge clk) begin\n        q1 <= d;\n        q2 <= q1;\n    end\nendmodule",
+    "bug_location": "q2 <= q1"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Sensitive Information Uncleared Before Power State Transition",
+    "code": "module power_transition(input wire clk, power_save, output reg [7:0] secret_data);\n    always @(posedge clk) begin\n        if (power_save) begin\n            secret_data <= 8'd0;\n        end\n    end\nendmodule",
+    "bug_location": "secret_data"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Incorrect Masking in Bitwise Operations",
+    "code": "module mask_problem(input wire [3:0] data, output reg [3:0] out);\n    always @* begin\n        out = data & 4'b1010;\n    end\nendmodule",
+    "bug_location": "out = data & 4'b1010"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Information Exposure Through Signal Timing",
+    "code": "module timing_issue(input wire clk, data, output reg send);\n    reg [3:0] counter;\n    always @(posedge clk) begin\n        if (counter == 4'd15) begin\n            send <= data;\n            counter <= 0;\n        end else begin\n            counter <= counter + 1;\n        end\n    end\nendmodule",
+    "bug_location": "counter == 4'd15"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Resource Not Removed Before Reuse",
+    "code": "module memory_reuse(input wire clk, reset, write_enable, input wire [7:0] data, output reg [7:0] memory);\n    always @(posedge clk or posedge reset) begin\n        if (reset) begin\n            memory <= 8'd0;\n        end else if (write_enable) begin\n            memory <= data;\n        end\n    end\nendmodule",
+    "bug_location": "memory"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Incorrect Default Permissions on Control Access",
+    "code": "module default_permission(input wire [2:0] access_level, output reg allowed);\n    always @* begin\n        case (access_level)\n            3'b000: allowed = 0;\n            3'b001: allowed = 0;\n            3'b010: allowed = 1;\n            3'b011: allowed = 0;\n            3'b100: allowed = 1;\n            default: allowed = 1; // Incorrect\n        endcase\n    end\nendmodule",
+    "bug_location": "default: allowed = 1"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step",
+    "code": "module basic_encoder(input wire [7:0] data_in, output reg [7:0] encoded_out);\n    always @* begin\n        encoded_out = data_in + 8'hAA; // Simple encoding\n    end\nendmodule",
+    "bug_location": "encoded_out = data_in + 8'hAA"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Insecure access control to a debug interface allows unauthorized user access.",
+    "code": "module debug_interface(\n    input clk,\n    input reset,\n    input enable_debug,\n    input [7:0] command,\n    output [7:0] response\n);\n    reg [7:0] internal_reg;\n    always @(posedge clk or posedge reset) begin\n        if (reset) begin\n            internal_reg <= 8'b0;\n        end else if (enable_debug) begin\n            internal_reg <= command;  // Bug: No authentication check\n        end\n    end\n    assign response = internal_reg;\nendmodule",
+    "bug_location": "Line 9 (no authentication check)"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "The use of a non-standard cryptographic primitive leads to security vulnerabilities.",
+    "code": "module crypto_module(\n    input wire [127:0] key,\n    input wire [127:0] data_in,\n    output wire [127:0] data_out\n);\n    wire [127:0] temp;\n    assign temp = data_in ^ key;  // Bug: Simple XOR used as encryption\n    assign data_out = temp;\nendmodule",
+    "bug_location": "Line 6 (XOR for encryption)"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Critical internal signals are exposed to debug logic without protection.",
+    "code": "module secure_module(\n    input wire clk,\n    input wire [7:0] secure_data,\n    output wire [7:0] debug_out\n);\n    reg [7:0] internal_reg;\n    always @(posedge clk) begin\n        internal_reg <= secure_data;\n    end\n    assign debug_out = internal_reg;  // Bug: Unprotected exposure to debug\nendmodule",
+    "bug_location": "Line 8 (unprotected exposure)"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Improper handling of chip power state transitions can lead to undefined behavior.",
+    "code": "module power_management(\n    input wire clk,\n    input wire power_on,\n    output reg system_ready\n);\n    always @(power_on) begin\n        if (power_on) begin\n            system_ready <= 1'b1;\n        end else begin\n            system_ready <= 1'b0; // Bug: No clock synchronization\n        end\n    end\nendmodule",
+    "bug_location": "Line 7 (no synchronization)"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Incorrect handling of sensitive operations during reset allowing state corruption.",
+    "code": "module sensitive_operation(\n    input wire clk,\n    input wire reset,\n    output reg [7:0] status\n);\n    reg [7:0] temp_status;\n    always @(posedge clk or posedge reset) begin\n        if (reset) begin\n            status <= temp_status;  // Bug: Sensitive operation on reset\n        end\n    end\nendmodule",
+    "bug_location": "Line 8 (reset handling)"
+  },
+  {
+    "cwe_id": "CWE-440",
+    "description": "Use of ambiguous signal names can lead to misunderstanding and security flaws.",
+    "code": "module ambiguous_names(\n    input wire en,\n    input wire data,\n    output wire wr_en\n);\n    assign wr_en = en & data; // Bug: Ambiguity in signal functions\nendmodule",
+    "bug_location": "Line 5 (ambiguous names)"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Improper handling of sensitive data exposure leading to information leakage.",
+    "code": "module exposure(\n    input wire [7:0] secret_key,\n    output wire [7:0] public_key\n);\n    assign public_key = secret_key;  // Bug: Direct mapping exposes secret\nendmodule",
+    "bug_location": "Line 5 (direct exposure)"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Hash function used with no salting increases vulnerability to pre-image attacks.",
+    "code": "module hash_check(\n    input wire [63:0] data,\n    output wire [31:0] hash_value\n);\n    assign hash_value = data[31:0] ^ data[63:32];  // Bug: No salting\nendmodule",
+    "bug_location": "Line 5 (missing salting)"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper handling of privilege levels on output pins can lead to privilege escalation.",
+    "code": "module privilege_control(\n    input wire [1:0] privilege_level,\n    output wire write_enable\n);\n    assign write_enable = (privilege_level == 2'b11); // Bug: Weak enforcement\nendmodule",
+    "bug_location": "Line 5 (weak enforcement)"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "External signals cause observable response differences revealing system state.",
+    "code": "module observable_discrepancy(\n    input wire clk,\n    input wire [3:0] input_signal,\n    output reg [3:0] output_signal\n);\n    always @(posedge clk) begin\n        if (input_signal == 4'b0000) begin\n            output_signal <= 4'b1111; // Bug: Observable response to zero\n        end\n    end\nendmodule",
+    "bug_location": "Line 7 (observable discrepancy)"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Improper Synchronization leading to data corruption.",
+    "code": "module data_handler(input clk, input rst, input [7:0] data_in, output reg [7:0] data_out);\n  reg [7:0] memory;\n  always @(posedge clk or posedge rst) begin\n    if (rst)\n      memory <= 8'b0;\n    else\n      data_out <= memory; // Improper synchronization\n  end\n  always @* begin\n    memory <= data_in; // Concurrent write without lock\n  end\nendmodule",
+    "bug_location": "Line 10"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use After Free in Memory Allocation.",
+    "code": "module memory_manager(input clk, input [7:0] addr, output [7:0] data_out);\n  reg [7:0] mem [0:255];\n  always @(posedge clk) begin\n    data_out <= mem[addr]; // Use after freeing memory not checked\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Missing Communication Channel Authentication.",
+    "code": "module authentication(input wire valid, output reg auth);\n  always @(*) begin\n    if (valid)\n      auth <= 1'b1; // Auth set without verifying source\n    else\n      auth <= 1'b0;\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Improper Handling of Wait States in FSM.",
+    "code": "module fsm(input clk, input reset, output reg state);\n  typedef enum {IDLE, WAIT, PROCESS} state_t;\n  state_t current_state, next_state;\n  always @(posedge clk or posedge reset) begin\n    if (reset)\n      current_state <= IDLE;\n    else\n      current_state <= next_state;\n  end\n  always @(*) begin\n    case (current_state)\n      IDLE: next_state = PROCESS; // Skips WAIT state\n      PROCESS: next_state = IDLE;\n    endcase\n  end\nendmodule",
+    "bug_location": "Line 10"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Faulty Comparison Leading to Security Risks.",
+    "code": "module comparator(input [7:0] a, input [7:0] b, output reg equal);\n  always @(*) begin\n    if (a == b || a == 0) // Faulty logic allows bypass\n      equal <= 1'b1;\n    else\n      equal <= 1'b0;\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Race Condition in Hardware Logic.",
+    "code": "module race_condition(input clk, input [7:0] data_in, output [7:0] data_out);\n  reg [7:0] buffer;\n  always @(posedge clk) begin\n    buffer <= data_in;  // Potential race when accessing data_in\n    data_out <= buffer;\n  end\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy via Side-Channel.",
+    "code": "module side_channel(input [7:0] secret, input [7:0] public, output reg alert);\n  always @(*) begin\n    if (secret & public) // Observable timing discrepancy\n      alert <= 1;\n    else\n      alert <= 0;\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Resource Not Removed Before Reuse.",
+    "code": "module sensitive_data(input [7:0] data_in, input rst, output [7:0] data_out);\n  reg [7:0] sensitive_memory;\n  always @(posedge rst) begin\n    sensitive_memory <= data_in; // Data not cleared on reset\n  end\n  assign data_out = sensitive_memory;\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Incorrect Permission Assignment for Critical Resource.",
+    "code": "module permission_control(input [7:0] user_id, output reg access);\n  always @(*) begin\n    if (user_id < 128) // Assumes 128 is non-sensitive user\n      access = 1;\n    else\n      access = 0;\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step in Data Encryption.",
+    "code": "module cipher(input [7:0] plain_text, output [7:0] cipher_text);\n  assign cipher_text = plain_text; // Missing encryption transformation\nendmodule",
+    "bug_location": "Line 3"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Incorrect Data Assignment leading to buffer overflow.",
+    "code": "module buffer_overflow;\n  reg [7:0] buf;\n  reg [15:0] data_in;\n  \n  always @(posedge clk) begin\n    buf <= data_in;\n  end\nendmodule",
+    "bug_location": "Line 5: buf <= data_in;"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Improper Handling of Condition leading to incorrect system state.",
+    "code": "module condition_handling;\n  reg reset_n;\n  reg state;\n  \n  always @(posedge clk) begin\n    if (~reset_n)\n      state <= 1'b1;\n    else\n      state <= state;\n  end\nendmodule",
+    "bug_location": "Line 7: else block incorrect."
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Register Interface Allows Software Access to Sensitive Data.",
+    "code": "module reg_interface;\n  reg [31:0] secret_key;\n  \n  initial begin\n    secret_key = 32'hdeadbeef;\n  end\n\n  // Insecure access method\n  assign data_out = secret_key;\nendmodule",
+    "bug_location": "Line 9: assign data_out = secret_key;"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Improper Isolation of Shared Resources in Network-on-Chip (NoC).",
+    "code": "module incomplete_isolation;\n  reg [31:0] shared_bus;\n  reg [31:0] private_data;\n\n  assign shared_bus = private_data;\nendmodule",
+    "bug_location": "Line 5: assign shared_bus = private_data;"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Access Control Check leading to unauthorized register access.",
+    "code": "module access_control;\n  reg [31:0] secure_reg;\n  wire unauthorized_user;\n\n  always @(posedge clk) begin\n    if (unauthorized_user)\n      secure_reg <= 32'h00000000; // No check before access\n  end\nendmodule",
+    "bug_location": "Line 6: secure_reg <= 32'h00000000;"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Information Exposure Through Debugging Information.",
+    "code": "module info_exposure;\n  reg [7:0] secret_data;\n  initial begin\n    secret_data = 8'b10101010;\n    $display(\"Debug: Secret data is %b\", secret_data);\n  end\nendmodule",
+    "bug_location": "Line 5: $display statement."
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Inconsistent Data Authorization across Layers.",
+    "code": "module inconsistent_auth;\n  reg authenticated;\n  reg data_access;\n\n  initial begin\n    authenticated = 0;\n    if (data_access)\n      $display(\"Accessing data!\"); // Data accessed without authorization check\n  end\nendmodule",
+    "bug_location": "Line 6: if (data_access)"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper Storage of Sensitive Information leading to leakage.",
+    "code": "module sensitive_storage;\n  reg [31:0] password;\n\n  initial begin\n    password = 32'h12345678;\n    $display(\"Stored password: %h\", password);\n  end\nendmodule",
+    "bug_location": "Line 5: $display(\"Stored password: %h\", password);"
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information.",
+    "code": "module cleartext_transmission;\n  reg [31:0] sensitive_data;\n  wire [31:0] data_bus;\n\n  assign data_bus = sensitive_data; // No encryption involved\nendmodule",
+    "bug_location": "Line 5: assign data_bus = sensitive_data;"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step in encryption process.",
+    "code": "module encryption_process;\n  reg [31:0] plain_text;\n  reg [31:0] cipher_text;\n\n  always @(plain_text) begin\n    // Missing encryption step\n    cipher_text = plain_text;\n  end\nendmodule",
+    "bug_location": "Line 6: cipher_text = plain_text;"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "On-Chip Debug and Test Interface With Improper Access Control allows unauthorized access to internal registers.",
+    "code": "module debug_interface(input logic clk, input logic [7:0] access_code, output logic [7:0] reg_data);\n    logic [7:0] internal_reg;\n    always @(posedge clk) begin\n        if (access_code == 8'hFF) // Default access code\n            reg_data <= internal_reg;\n    end\nendmodule",
+    "bug_location": "Line 4 (access_code == 8'hFF)"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a Cryptographic Primitive with a Risky Implementation lacks proper randomization and protection.",
+    "code": "module weak_rng(output logic [3:0] rand_num);\n    logic [3:0] seed = 4'b1010;\n    always_comb begin\n        rand_num = seed ^ 4'b1100; // Weak random number generation\n    end\nendmodule",
+    "bug_location": "Line 4 (rand_num = seed ^ 4'b1100)"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Choose of Vulnerable Key Size for Cryptographic Protection using an insecure 56-bit DES cipher.",
+    "code": "module des_cipher(input logic [55:0] plaintext, input logic [55:0] key, output logic [55:0] ciphertext);\n    always_comb begin\n        ciphertext = plaintext ^ key; // Oversimplified DES operation\n    end\nendmodule",
+    "bug_location": "Line 2 (key size 56 bits)"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Improper Isolation of Physical Address Space in memory addressing logic.",
+    "code": "module memory_controller(input logic [31:0] address, output logic [7:0] data);\n    logic [7:0] memory [0:1023];\n    always_comb begin\n        if (address < 1024)\n            data = memory[address];\n    end\nendmodule",
+    "bug_location": "Line 4 (address < 1024)"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Unrestricted Write into Critical Memory Location allows arbitrary writes without checks.",
+    "code": "module memory_write(input logic [31:0] address, input logic [7:0] data_in);\n    logic [7:0] memory [0:1023];\n    always_comb begin\n        memory[address] = data_in; // Unsafe write\n    end\nendmodule",
+    "bug_location": "Line 4 (memory[address] = data_in)"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improperly Implemented Security Check can be bypassed by uninitialized signal values.",
+    "code": "module security_check(input logic enable, input logic [15:0] data, output logic secure);\n    always_comb begin\n        if (enable) // Uninitialized 'enable'\n            secure = (data == 16'hABCD);\n    end\nendmodule",
+    "bug_location": "Line 4 (if (enable))"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy arises from time variations in failed and successful authentication attempts.",
+    "code": "module auth_system(input logic clk, input logic [3:0] pin, output logic auth_success);\n    logic [3:0] sys_pin = 4'b0110;\n    always @(posedge clk) begin\n        if (pin == sys_pin)\n            auth_success <= 1;\n        else\n            auth_success <= 0;\n    end\nendmodule",
+    "bug_location": "Line 5 (if (pin == sys_pin))"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Data Transmitted in Cleartext over unprotected interface leads to data breaches.",
+    "code": "module data_transmitter(input logic [15:0] data, output logic [15:0] out);\n    always_comb begin\n        out = data; // No encryption applied\n    end\nendmodule",
+    "bug_location": "Line 3 (out = data)"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Insecure Default Initialization leading to vulnerable states at startup.",
+    "code": "module insecure_initialization(output logic [7:0] init_state);\n    initial begin\n        init_state = 8'h00; // Insecure initial state\n    end\nendmodule",
+    "bug_location": "Line 3 (init_state = 8'h00)"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step fails to properly authenticate the data input.",
+    "code": "module simple_auth(input logic [7:0] data_in, output logic auth);\n    always_comb begin\n        auth = (data_in[0] == 1'b1); // Insufficient authentication\n    end\nendmodule",
+    "bug_location": "Line 3 (auth = (data_in[0] == 1'b1))"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "Insecure Default Initialization. A forced weak initial reset value allows attackers to exploit logic during reset transitions.",
+    "code": "module insecure_reset(input clk, rst_n, output reg q);\n  always @(posedge clk or negedge rst_n) begin\n    if (!rst_n)\n      q <= 1'b0; // Insecure default\n    else\n      q <= q + 1;\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Incorrect Calculation. Overflow occurs when counter exceeds its maximum value without wrapping correctly.",
+    "code": "module overflow_counter(input clk, rst_n, output reg [3:0] count);\n  always @(posedge clk or negedge rst_n) begin\n    if (!rst_n)\n      count <= 0;\n    else\n      count <= count + 1;\n  end\nendmodule",
+    "bug_location": "Line 6"
+  },
+  {
+    "cwe_id": "CWE-1244",
+    "description": "Improper Data Locking. Lack of mutex or semaphore for register access in multi-clock domain.",
+    "code": "module data_lock(input clk1, clk2, output reg [7:0] reg_data);\n  always @(posedge clk1) begin\n    reg_data <= reg_data + 1;\n  end\n  always @(posedge clk2) begin\n    reg_data <= reg_data - 1;\n  end\nendmodule",
+    "bug_location": "reg_data"
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Backdoor Injection via Test Features. Bypass logic includes a hidden debug port accessible during normal operation.",
+    "code": "module hidden_backdoor(input clk, test_mode, output reg secure_data);\n  always @(posedge clk) begin\n    if (test_mode) begin\n      secure_data <= 8'hFF; // Backdoor initialization\n    end\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Sensitive Information Uncleared Before Debug/Power State Transition. Debug remnants remain in registers during transitions.",
+    "code": "module debug_info(input clk, debug_en, output reg [7:0] sens_data);\n  always @(posedge clk) begin\n    if (debug_en) begin\n      sens_data <= 8'hAB;  // Debug data left\n    end\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Improper Inclusion of Functionality from Untrusted Control Sphere. External control of secure FSM transition leads to unauthorized states.",
+    "code": "module fsm_bypass(input clk, reset, unauthorized_input, output reg state);\n  always @(posedge clk or negedge reset) begin\n    if (!reset)\n      state <= 0;\n    else if (unauthorized_input)\n      state <= 1; // Unauthorized control\n  end\nendmodule",
+    "bug_location": "Line 7"
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy. System response time leaks internal state based on operations performed.",
+    "code": "module timing_leak(input clk, input_data, output reg [7:0] result);\n  always @(posedge clk) begin\n    if (input_data == 8'hFF) begin\n      #100 result <= 8'h01; // Timing side channel\n    end else begin\n      result <= 8'h00;\n    end\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information in Data Center. Lack of scrubbing sensitive data before reuse of storage.",
+    "code": "module reuse_storage(input clk, rst_n, output reg [7:0] memory);\n  always @(posedge clk or negedge rst_n) begin\n    if (!rst_n)\n      memory <= 0;\n    else begin\n      // Data remnants not cleared\n      memory <= memory + 1;\n    end\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper Default Permissions. Unrestricted access to configuration registers without authorization control.",
+    "code": "module config_reg(input clk, output reg [15:0] cfg_reg);\n  always @(posedge clk) begin\n    cfg_reg <= 16'hFFFF; // Default unrestricted access\n  end\nendmodule",
+    "bug_location": "Line 4"
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missing Cryptographic Step. Lack of proper key management leads to predictable security outcomes.",
+    "code": "module crypto_module(input clk, key_enable, output reg [31:0] secure_out);\n  always @(posedge clk) begin\n    if (key_enable) begin\n      secure_out <= 32'h12345678; // Weak predictable output\n    end\n  end\nendmodule",
+    "bug_location": "Line 5"
+  },
+  {
+    "cwe_id": "CWE-1191",
+    "description": "On-Chip Debug and Test Interface with Improper Access Control",
+    "code": "module debug_interface (\n    input wire clk,\n    input wire [3:0] password,\n    output wire enable_debug\n);\n    reg valid_password;\n    always @(posedge clk) begin\n        if (password == 4'b0110) // Debug password\n            valid_password <= 1'b1;\n        else\n            valid_password <= 1'b0;\n    end\n    assign enable_debug = valid_password;\nendmodule",
+    "bug_location": "Line 6: password check is weak."
+  },
+  {
+    "cwe_id": "CWE-1240",
+    "description": "Use of a One-Way Transfer Protocol Without Error Checking",
+    "code": "module data_transfer (\n    input wire clk,\n    input wire [7:0] data_in,\n    output wire [7:0] data_out\n);\n    reg [7:0] buffer;\n    always @(posedge clk) begin\n        buffer <= data_in; // No error checking\n    end\n    assign data_out = buffer;\nendmodule",
+    "bug_location": "Line 6: Lack of error checking for data transfer."
+  },
+  {
+    "cwe_id": "CWE-1262",
+    "description": "Sensitive Data Exposure in Debug/Error Messages",
+    "code": "module sensitive_data_leak (\n    input wire clk,\n    input wire [15:0] secret_key,\n    output wire [15:0] debug_info\n);\n    always @(posedge clk) begin\n        // Debug inadvertently reveals sensitive data\n        debug_info <= secret_key; \n    end\nendmodule",
+    "bug_location": "Line 6: secret_key exposed in debug_info."
+  },
+  {
+    "cwe_id": "CWE-1272",
+    "description": "Use of Security-Relevant Constants for Key Management",
+    "code": "module key_management (\n    input wire [15:0] input_key,\n    output wire [15:0] internal_key\n);\n    parameter DEFAULT_KEY = 16'hdead;\n    assign internal_key = (input_key == 0) ? DEFAULT_KEY : input_key;\nendmodule",
+    "bug_location": "Line 5: DEFAULT_KEY is a constant."
+  },
+  {
+    "cwe_id": "CWE-1300",
+    "description": "Incorrect Calculation of Buffer Size",
+    "code": "module buffer_overflow (\n    input wire [3:0] data_in,\n    output wire [4:0] data_out\n);\n    reg [3:0] buffer;\n    always @(data_in) begin\n        buffer = data_in; // Buffer size miscalculation\n    end\n    assign data_out = {1'b0, buffer};\nendmodule",
+    "bug_location": "Line 5: buffer may overflow."
+  },
+  {
+    "cwe_id": "CWE-226",
+    "description": "Sensitive Information Exposure Due to Race Condition",
+    "code": "module race_condition (\n    input wire clk,\n    input wire [15:0] sensitive_data,\n    output reg [15:0] public_data\n);\n    always @(posedge clk) begin\n        if (clk) \n            public_data <= sensitive_data; // Potential race condition\n    end\nendmodule",
+    "bug_location": "Line 6-7: Race condition exposing sensitive_data."
+  },
+  {
+    "cwe_id": "CWE-276",
+    "description": "Improper Enforcement of Lock/Unlock Functionality",
+    "code": "module lock_mechanism (\n    input wire clk,\n    input wire lock,\n    output reg locked_state\n);\n    always @(posedge clk) begin\n        if (lock)\n            locked_state <= ~locked_state; // Improper toggle logic\n    end\nendmodule",
+    "bug_location": "Line 6: Toggle logic rather than set/clear."
+  },
+  {
+    "cwe_id": "CWE-319",
+    "description": "Cleartext Transmission of Sensitive Information",
+    "code": "module cleartext_transmission (\n    input wire [7:0] sensitive_data,\n    output wire [7:0] transmitted_data\n);\n    assign transmitted_data = sensitive_data; // Cleartext transmission\nendmodule",
+    "bug_location": "Line 4: Transmission without encryption."
+  },
+  {
+    "cwe_id": "CWE-325",
+    "description": "Missed Opportunity for Key Encoding",
+    "code": "module weak_key_encoding (\n    input wire [7:0] raw_key,\n    output wire [7:0] encoded_key\n);\n    // Missed key encoding opportunity\n    assign encoded_key = raw_key;\nendmodule",
+    "bug_location": "Line 5: raw_key used directly without encoding."
+  },
+  {
+    "cwe_id": "CWE-203",
+    "description": "Observable Discrepancy",
+    "code": "module sensitive_decision (\n    input wire condition,\n    output wire result\n);\n    assign result = (condition) ? 1'b1 : 1'b0; // Observable decision from condition\nendmodule",
+    "bug_location": "Line 4: Exposure of internal logic decision."
+  }
+]
