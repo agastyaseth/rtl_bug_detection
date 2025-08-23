@@ -25,10 +25,14 @@ from typing import Dict, List, Tuple
 
 from openai import OpenAI
 from tqdm import tqdm
+import os
 
-# read the OpenAI API key from the .env file
-with open(".env", "r") as f:
-    OPENAI_API_KEY = f.read().split("=")[1].strip()
+# Read the OpenAI API key from the environment variable.
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if OPENAI_API_KEY is None:
+    raise RuntimeError(
+        "OPENAI_API_KEY environment variable is not set; please export it before running"
+    )
 
 # Initialise the client.  The OpenAI Python SDK (>=1.0) uses the ``OpenAI``
 # interface rather than the legacy ``openai.ChatCompletion`` entrypoint.
