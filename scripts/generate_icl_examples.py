@@ -23,16 +23,18 @@ import random
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-import openai
+from openai import OpenAI
 from tqdm import tqdm
 
-# read the openai api key from the .env file
+# read the OpenAI API key from the .env file
 with open(".env", "r") as f:
     OPENAI_API_KEY = f.read().split("=")[1].strip()
 
-# Set the API key for the openai library
-openai.api_key = OPENAI_API_KEY
-print(f"Using OpenAI API key: {OPENAI_API_KEY}")
+# Initialise the client.  The OpenAI Python SDK (>=1.0) uses the ``OpenAI``
+# interface rather than the legacy ``openai.ChatCompletion`` entrypoint.
+client = OpenAI(api_key=OPENAI_API_KEY)
+# Avoid logging the full key; show only the last 4 characters for debugging.
+print(f"Using OpenAI API key: ...{OPENAI_API_KEY[-4:]}")
 
 
 DATASET_PATH = Path("data/buggy_rtl_dataset.json")
@@ -97,11 +99,15 @@ def build_prompt(seeds: List[Dict[str, str]]) -> str:
 def call_llm(prompt: str) -> str:
     """Send the prompt to the OpenAI API and return the generated code."""
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
+        # Use GPT-4o as the generation model.  The original implementation
+        # defaulted to ``gpt-4o-mini`` which is lighter but less capable.  The
+        # current experiments target the full GPT-4o model for higher fidelity
+        # RTL bug synthesis and downstream evaluations.
+        response = client.chat.completions.create(
+            model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
         )
-        return response["choices"][0]["message"]["content"]
+        return response.choices[0].message.content
     except Exception as e:
         print(f"Warning: API call failed: {e}")
         # Return a fallback response that can still be parsed
