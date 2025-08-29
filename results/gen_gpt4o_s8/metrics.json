@@ -1,0 +1,9 @@
+{
+  "model": "gpt4o",
+  "shots": 8,
+  "generated": 26,
+  "lint_pass_rate": 0.0,
+  "injection_realism": 96.15384615384616,
+  "label_consistency": 100.0,
+  "diversity_entropy": 4.510982477323568
+}

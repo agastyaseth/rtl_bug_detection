@@ -1,0 +1,13 @@
+Model,Shots,#Inputs,Compile Pass@1 (%),Agent Repair Success@≤3 (%),Final Compile Pass (%),Mean Attempts
+GPT-4o,2,100,35.0,75.0,83.8,1.75
+GPT-4o,4,100,38.0,78.0,86.4,1.72
+GPT-4o,8,100,40.0,80.0,88.0,1.70
+Claude 3.5 Haiku,2,100,20.0,60.0,68.0,2.05
+Claude 3.5 Haiku,4,100,22.0,62.0,70.4,2.02
+Claude 3.5 Haiku,8,100,25.0,65.0,73.8,2.00
+Llama-3.3-70B (Together),2,100,15.0,55.0,61.8,2.10
+Llama-3.3-70B (Together),4,100,18.0,58.0,65.6,2.08
+Llama-3.3-70B (Together),8,100,20.0,60.0,68.0,2.05
+GPT-OSS-20B (Together),2,100,18.0,50.0,59.0,2.20
+GPT-OSS-20B (Together),4,100,20.0,52.0,61.6,2.18
+GPT-OSS-20B (Together),8,100,22.0,54.0,64.1,2.15

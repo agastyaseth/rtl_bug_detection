@@ -1,0 +1,9 @@
+{
+  "model": "together:openai/gpt-oss-20b",
+  "shots": 2,
+  "generated": 3,
+  "lint_pass_rate": 0.0,
+  "injection_realism": 0.0,
+  "label_consistency": 0.0,
+  "diversity_entropy": 3.923255400164931
+}

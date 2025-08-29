@@ -1,0 +1,5 @@
+Model,Shots,Shots Label,Turn Style,Exact CWE Acc (%),Loc@±10 (%),Precision (%),Recall (%),Pass@1 (%),Latency (ms/sample)
+GPT-4o,0,Zero-shot,One-turn,28.0,16.0,11.4,0.78,48.6,6438
+Claude 3.5 Haiku,0,Zero-shot,One-turn,20.0,16.0,11.4,2.01,88.6,4468
+GPT-4o,2,Two-shot,One-turn,28.0,16.0,11.4,0.78,77.1,3205
+Claude 3.5 Haiku,2,Two-shot,One-turn,16.0,16.0,10.0,0.92,94.3,13599

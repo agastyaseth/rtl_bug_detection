@@ -1,0 +1,30 @@
+{
+  "A1": [
+    {"model":"gpt4o","shots":0,"turn":"one","exact_cwe_acc":28.0,"loc_at_10":16.0,"precision":16.0,"recall":1.1,"pass_at_1":68.0,"latency_ms":6438},
+    {"model":"claude-3.5-haiku","shots":0,"turn":"one","exact_cwe_acc":20.0,"loc_at_10":16.0,"precision":16.0,"recall":2.8,"pass_at_1":100.0,"latency_ms":4468},
+    {"model":"gpt4o","shots":2,"turn":"one","exact_cwe_acc":28.0,"loc_at_10":16.0,"precision":16.0,"recall":1.1,"pass_at_1":100.0,"latency_ms":3205},
+    {"model":"claude-3.5-haiku","shots":2,"turn":"one","exact_cwe_acc":16.0,"loc_at_10":16.0,"precision":14.0,"recall":1.3,"pass_at_1":100.0,"latency_ms":13599}
+  ],
+  "A2": [
+    {"model":"gpt4o","shots":0,"matching":"exact","loc_at_10":16.0,"notes":"trimmed refs+example"},
+    {"model":"claude-3.5-haiku","shots":0,"matching":"exact","loc_at_10":16.0,"notes":"trimmed refs+example"},
+    {"model":"gpt4o","shots":2,"matching":"exact","loc_at_10":16.0,"notes":"trimmed refs+2 examples"},
+    {"model":"claude-3.5-haiku","shots":2,"matching":"exact","loc_at_10":16.0,"notes":"trimmed refs+2 examples"}
+  ],
+  "A3": [
+    {"model":"gpt4o","shots":0,"template":"refs+example(trim)","exact_cwe_acc":28.0,"loc_at_10":16.0},
+    {"model":"gpt4o","shots":2,"template":"refs+2examples(trim)","exact_cwe_acc":28.0,"loc_at_10":16.0},
+    {"model":"claude-3.5-haiku","shots":0,"template":"refs+example(trim)","exact_cwe_acc":20.0,"loc_at_10":16.0},
+    {"model":"claude-3.5-haiku","shots":2,"template":"refs+2examples(trim)","exact_cwe_acc":16.0,"loc_at_10":16.0}
+  ],
+  "B1": [
+    {"model":"gpt4o","shots":2,"round":"R0","icl":"random","exact_cwe_acc":28.0,"loc_at_10":16.0,"precision":16.0,"recall":1.1,"pass_at_1":100.0},
+    {"model":"gpt4o","shots":2,"round":"R1","icl":"hard","exact_cwe_acc":52.0,"loc_at_10":16.0,"precision":16.0,"recall":1.1,"pass_at_1":88.0},
+    {"model":"claude-3.5-haiku","shots":2,"round":"R0","icl":"random","exact_cwe_acc":16.0,"loc_at_10":16.0,"precision":14.0,"recall":1.3,"pass_at_1":100.0},
+    {"model":"claude-3.5-haiku","shots":2,"round":"R1","icl":"hard","exact_cwe_acc":24.0,"loc_at_10":16.0,"precision":14.0,"recall":1.3,"pass_at_1":100.0}
+  ],
+  "B2": {
+    "round":"R0","icl_exemplars":70,"cwes_covered":null,"coverage_pct":null,"entropy":null,
+    "source_distribution":{"CEP":null,"HACK@DAC":null,"Synthetic":null}
+  }
+}

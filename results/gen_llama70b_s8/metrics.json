@@ -1,0 +1,9 @@
+{
+  "model": "together:meta-llama/Llama-3.3-70B-Instruct-Turbo-Free",
+  "shots": null,
+  "generated": 12,
+  "lint_pass_rate": 0.0,
+  "injection_realism": 0.0,
+  "label_consistency": 0.0,
+  "diversity_entropy": 4.424143878401111
+}

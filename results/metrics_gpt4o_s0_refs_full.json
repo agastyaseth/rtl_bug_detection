@@ -1,0 +1,9 @@
+{
+  "total": 35,
+  "exact_cwe_acc": 0.14285714285714285,
+  "loc@\u00b110": 0.0,
+  "precision_avg": 0.0,
+  "recall_avg": 0.0,
+  "pass@1": 0.42857142857142855,
+  "latency_ms_mean": 2653.9564541407995
+}

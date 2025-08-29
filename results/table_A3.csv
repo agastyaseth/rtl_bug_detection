@@ -1,0 +1,5 @@
+Model,Shots,Shots Label,Prompt Template,Exact CWE Acc (%),Loc@±10 (%),Notes
+GPT-4o,0,Zero-shot,Refs+Example (trimmed),28.0,16.0,One-turn; JSON-only
+GPT-4o,2,Two-shot,Refs+2 Examples (trimmed),28.0,16.0,One-turn; JSON-only
+Claude 3.5 Haiku,0,Zero-shot,Refs+Example (trimmed),20.0,16.0,One-turn; JSON-only
+Claude 3.5 Haiku,2,Two-shot,Refs+2 Examples (trimmed),16.0,16.0,One-turn; JSON-only

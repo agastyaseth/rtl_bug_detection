@@ -1,0 +1,7 @@
+Model,Shots,Round,ICL Source,Exact CWE Acc (%),Loc@±10 (%),Precision (%),Recall (%),Pass@1 (%)
+GPT-4o,2,R0,random,28.0,16.0,11.4,0.78,77.1
+GPT-4o,2,R1,hard,52.0,16.0,11.4,0.78,88.0
+GPT-4o,2,R2,hard,48.0,16.0,11.4,0.78,84.0
+Claude 3.5 Haiku,2,R0,random,16.0,16.0,10.0,0.92,94.3
+Claude 3.5 Haiku,2,R1,hard,24.0,16.0,10.0,0.92,100.0
+Claude 3.5 Haiku,2,R2,hard,24.0,16.0,10.0,0.92,100.0

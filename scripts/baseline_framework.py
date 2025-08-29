@@ -2,8 +2,14 @@
 """
 Baseline Testing Framework for Hardware CWE Bug Detection in RTL Files
 
-This script provides a framework for testing LLM models (GPT-4o, Gemma 3 12B, Llama 4 Scout)
-on their ability to detect hardware security vulnerabilities (CWEs) in RTL files.
+This script provides a framework for testing LLM models on their ability to detect
+hardware security vulnerabilities (CWEs) in RTL files. Supported providers:
+
+- OpenAI GPT-4o (env: OPENAI_API_KEY)
+- Anthropic Claude 3.5 Haiku (env: ANTHROPIC_API_KEY)
+- Google Gemini 1.5 Pro (env: GEMINI_API_KEY)
+
+Place API keys in your environment before running, or in a local .env that you source.
 """
 
 import os
@@ -13,13 +19,24 @@ import argparse
 import csv
 from datetime import datetime
 import openai
-import requests
 from tqdm import tqdm
+
+# Optional provider SDKs. Import inside query functions to avoid hard dependency.
+# Anthropic: pip install anthropic
+# Gemini: pip install google-generativeai
 
 # Configuration
 RESULTS_DIR = "../results"
 DATA_DIR = "../data"
-MODELS = ["gpt4o", "gemma3-12b", "llama4-scout"]
+# Supported model identifiers for CLI
+MODELS = [
+    "gpt4o",
+    "claude-3.5-haiku",
+    "gemini-1.5-pro",
+    # Placeholders retained for future/local providers
+    "gemma3-12b",
+    "llama4-scout",
+]
 
 # Ensure results directory exists
 os.makedirs(RESULTS_DIR, exist_ok=True)
@@ -33,17 +50,34 @@ def load_dataset(dataset_path):
 
 # Load the CWE bug list for reference
 def load_cwe_list(cwe_list_path):
-    """Load the CWE bug list for reference."""
+    """Load the CWE bug list for reference.
+
+    The CSV may contain extra empty columns and may not include a
+    'Justification' column. This loader tolerates missing fields and
+    trims whitespace. Only 'Bug ID', 'CWE-ID', and 'Description' are required.
+    """
     cwe_dict = {}
-    with open(cwe_list_path, 'r') as f:
+    with open(cwe_list_path, 'r', newline='') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            if row['Bug ID'] and row['CWE-ID']:
-                cwe_dict[int(row['Bug ID'])] = {
-                    'cwe_id': row['CWE-ID'],
-                    'description': row['Description'],
-                    'justification': row['Justification']
-                }
+            bug_id_raw = (row.get('Bug ID') or '').strip()
+            cwe_id = (row.get('CWE-ID') or '').strip()
+            description = (row.get('Description') or '').strip()
+            justification = (row.get('Justification') or '').strip() if 'Justification' in row else ''
+
+            if not bug_id_raw or not cwe_id:
+                continue
+            try:
+                bug_id = int(bug_id_raw)
+            except ValueError:
+                # Skip rows with non-numeric Bug ID
+                continue
+
+            cwe_dict[bug_id] = {
+                'cwe_id': cwe_id,
+                'description': description,
+                'justification': justification,
+            }
     return cwe_dict
 
 # Prompt templates for different models
@@ -95,30 +129,119 @@ Your task:
 
 Present your findings in a clear, structured format.
 """
+    ,
+    # Use the same task scaffold for other providers
+    "claude-3.5-haiku": """You are a hardware security expert specializing in identifying Common Weakness Enumeration (CWE) vulnerabilities in RTL code.
+
+I'll provide you with a Verilog RTL file that contains a hardware security vulnerability. Your task is to:
+
+1. Identify the specific CWE vulnerability in the code
+2. Specify the exact line numbers or code sections where the vulnerability exists
+3. Explain why this is a vulnerability and how it could be exploited
+4. Provide the specific CWE ID (e.g., CWE-1234) that best matches this vulnerability
+
+Here is the RTL code to analyze:
+
+```verilog
+{rtl_code}
+```
+
+Respond with a structured analysis that clearly identifies the vulnerability, its location, and the corresponding CWE ID.
+""",
+    "gemini-1.5-pro": """You are a hardware security expert specializing in identifying Common Weakness Enumeration (CWE) vulnerabilities in RTL code.
+
+I'll provide you with a Verilog RTL file that contains a hardware security vulnerability. Your task is to:
+
+1. Identify the specific CWE vulnerability in the code
+2. Specify the exact line numbers or code sections where the vulnerability exists
+3. Explain why this is a vulnerability and how it could be exploited
+4. Provide the specific CWE ID (e.g., CWE-1234) that best matches this vulnerability
+
+Here is the RTL code to analyze:
+
+```verilog
+{rtl_code}
+```
+
+Respond with a structured analysis that clearly identifies the vulnerability, its location, and the corresponding CWE ID.
+""",
 }
 
 # Function to call GPT-4o API
-def query_gpt4o(rtl_code):
+def query_gpt4o(rtl_code: str) -> str:
     """Query the GPT-4o API with the RTL code."""
     try:
-        # Replace with your actual API key mechanism
-        client = openai.OpenAI(api_key="YOUR_API_KEY")
-        
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENAI_API_KEY is not set")
+        client = openai.OpenAI(api_key=api_key)
+
         prompt = PROMPT_TEMPLATES["gpt4o"].format(rtl_code=rtl_code)
-        
+
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a hardware security expert specializing in identifying CWE vulnerabilities in RTL code."},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt},
             ],
             temperature=0.1,
-            max_tokens=2000
+            max_tokens=2000,
         )
-        
+
         return response.choices[0].message.content
     except Exception as e:
         print(f"Error querying GPT-4o: {e}")
+        return f"Error: {str(e)}"
+
+
+def query_claude35_haiku(rtl_code: str) -> str:
+    """Query Anthropic Claude 3.5 Haiku with the RTL code."""
+    try:
+        import anthropic  # type: ignore
+
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise RuntimeError("ANTHROPIC_API_KEY is not set")
+
+        client = anthropic.Anthropic(api_key=api_key)
+        prompt = PROMPT_TEMPLATES["claude-3.5-haiku"].format(rtl_code=rtl_code)
+
+        msg = client.messages.create(
+            model="claude-3-5-haiku-latest",
+            max_tokens=2000,
+            temperature=0.1,
+            system="You are a hardware security expert specializing in identifying CWE vulnerabilities in RTL code.",
+            messages=[{"role": "user", "content": prompt}],
+        )
+
+        # Concatenate text blocks
+        parts = []
+        for block in getattr(msg, "content", []) or []:
+            if getattr(block, "type", None) == "text":
+                parts.append(getattr(block, "text", ""))
+        return "".join(parts)
+    except Exception as e:
+        print(f"Error querying Claude 3.5 Haiku: {e}")
+        return f"Error: {str(e)}"
+
+
+def query_gemini15pro(rtl_code: str) -> str:
+    """Query Google Gemini 1.5 Pro with the RTL code (API key via GEMINI_API_KEY)."""
+    try:
+        import google.generativeai as genai  # type: ignore
+
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY is not set")
+
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-1.5-pro-latest")
+        prompt = PROMPT_TEMPLATES["gemini-1.5-pro"].format(rtl_code=rtl_code)
+        response = model.generate_content(prompt)
+        # google-generativeai returns .text for the combined candidate text
+        return getattr(response, "text", "") or ""
+    except Exception as e:
+        print(f"Error querying Gemini 1.5 Pro: {e}")
         return f"Error: {str(e)}"
 
 # Placeholder functions for other models
@@ -180,6 +303,10 @@ def run_baseline_tests(dataset, cwe_dict, models=None):
             # Query the appropriate model
             if model == "gpt4o":
                 response = query_gpt4o(rtl_code)
+            elif model == "claude-3.5-haiku":
+                response = query_claude35_haiku(rtl_code)
+            elif model == "gemini-1.5-pro":
+                response = query_gemini15pro(rtl_code)
             elif model == "gemma3-12b":
                 response = query_gemma3(rtl_code)
             elif model == "llama4-scout":

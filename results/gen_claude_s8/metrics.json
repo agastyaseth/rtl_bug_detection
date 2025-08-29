@@ -1,0 +1,9 @@
+{
+  "model": "claude-3.5-haiku",
+  "shots": 8,
+  "generated": 26,
+  "lint_pass_rate": 0.0,
+  "injection_realism": 0.0,
+  "label_consistency": 0.0,
+  "diversity_entropy": 4.623446075438237
+}

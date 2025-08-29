@@ -1,0 +1,5 @@
+Model,Shots,Shots Label,Matching Mode,Loc@±10 (%),Loc@±25 (%),Notes
+GPT-4o,0,Zero-shot,Exact lines (±10 eval),16.0,,Trimmed refs+example
+Claude 3.5 Haiku,0,Zero-shot,Exact lines (±10 eval),16.0,,Trimmed refs+example
+GPT-4o,2,Two-shot,Exact lines (±10 eval),16.0,,Trimmed refs+2 examples
+Claude 3.5 Haiku,2,Two-shot,Exact lines (±10 eval),16.0,,Trimmed refs+2 examples

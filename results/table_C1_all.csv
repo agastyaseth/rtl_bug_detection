@@ -1,0 +1,10 @@
+Model,Shots,#Generated,Lint Pass Rate (%),Injection Realism (%),CWE Label Consistency (%),Diversity (Entropy)
+GPT-4o,2,6,0.0,100.0,100.0,4.1994
+Claude 3.5 Haiku,2,6,0.0,0.0,0.0,4.2366
+Llama-3.3-70B (Together),2,3,0.0,0.0,0.0,3.8848
+GPT-OSS-20B (Together),2,3,0.0,0.0,0.0,3.9233
+GPT-4o,4,26,0.0,96.15,100.0,4.3449
+Claude 3.5 Haiku,4,26,0.0,0.0,0.0,4.6864
+Llama-3.3-70B (Together),4,6,0.0,0.0,0.0,4.2579
+GPT-4o,8,26,0.0,96.15,100.0,4.511
+Claude 3.5 Haiku,8,26,0.0,0.0,0.0,4.6234
